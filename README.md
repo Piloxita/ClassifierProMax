@@ -9,10 +9,6 @@ $ pip install classifierpromax
 ```
 
 ## Usage
-
-<<<<<<< Updated upstream
-- TODO
-=======
 1. Training baseline models
 ```python
 from classifierpromax import classifier_trainer
@@ -47,8 +43,6 @@ from classifierpromax import results_handler
 # Function will score the models and return a summary table
 summary = results_handler(opt_score)
 ```
->>>>>>> Stashed changes
-
 ## Contributing
 
 Interested in contributing? Check out the contributing guidelines. Please note that this project is released with a Code of Conduct. By contributing to this project, you agree to abide by its terms.

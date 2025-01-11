@@ -13,6 +13,7 @@ This function will perform hyperparameter optimization on all input models.
 
 `results_handler()`:
 This function will score all the input models based on the criteria specified and visualize the results.
+
 In a machine learning pipeline, code can often be repeated when working with multiple models, violating the DRY (Don’t-Repeat-Yourself) principle. This Python library is to promote DRY principles in machine learning code and create cleaner code.
 
 ## Installation

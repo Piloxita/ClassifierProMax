@@ -1,6 +1,19 @@
 # classifierpromax
 
-Help you train and optimize many popuplar classifiers in one place with a nice result table
+classifierpromax is a scikit-learn wrapper library that helps to train and optimize multiple classifier models in parallel.
+
+`classifier_trainer()`:
+This function trains four classifier models using default hyperparameter values. These are used as a baseline for model performance.
+
+`feature_selector()`:
+This function will perform feature selection on all input models.
+
+`classifier_optimizer()`:
+This function will perform hyperparameter optimization on all input models.
+
+`results_handler()`:
+This function will score all the input models based on the criteria specified and visualize the results.
+In a machine learning pipeline, code can often be repeated when working with multiple models, violating the DRY (Don’t-Repeat-Yourself) principle. This Python library is to promote DRY principles in machine learning code and create cleaner code.
 
 ## Installation
 

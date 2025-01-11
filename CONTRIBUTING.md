@@ -1,7 +1,6 @@
 # Contributing
 
-Contributions are welcome, and they are greatly appreciated! Every little bit
-helps, and credit will always be given.
+We welcome contributions of all kinds, and your help is greatly appreciated! Whether it's fixing bugs, adding new features, or improving documentation, your efforts make a difference, and you will always be credited for your work.
 
 ## Types of Contributions
 
@@ -10,8 +9,8 @@ helps, and credit will always be given.
 If you are reporting a bug, please include:
 
 * Your operating system name and version.
-* Any details about your local setup that might be helpful in troubleshooting.
-* Detailed steps to reproduce the bug.
+* Any relevant details about your local setup that may assist in troubleshooting.
+* Detailed steps to reproduce the bug, along with any error messages.
 
 ### Fix Bugs
 
@@ -25,9 +24,11 @@ and "help wanted" is open to whoever wants to implement it.
 
 ### Write Documentation
 
-You can never have enough documentation! Please feel free to contribute to any
-part of the documentation, such as the official docs, docstrings, or even
-on the web in blog posts, articles, and such.
+Documentation is essential, and there's always room for improvement! You can contribute to various types of documentation, such as:
+
+* Official documentation (e.g., README, contributing guide).
+* Docstrings in the code.
+* External resources, including blog posts, tutorials, and articles.
 
 ### Submit Feedback
 
@@ -55,7 +56,7 @@ Ready to contribute? Here's how to set up `classifierpromax` for local developme
     $ git checkout -b name-of-your-bugfix-or-feature
     ```
 
-4. When you're done making changes, check that your changes conform to any code formatting requirements and pass any tests.
+4. Once you're done with your changes, ensure that they adhere to the project's code formatting requirements and pass all tests.
 
 5. Commit your changes and open a pull request.
 

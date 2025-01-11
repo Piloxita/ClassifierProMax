@@ -13,6 +13,7 @@ Examples of behavior that contributes to creating a positive environment include
 * Gracefully accepting constructive criticism
 * Focusing on what is best for the community
 * Showing empathy towards other community members
+* Striving to make the project accessible to everyone, including people with disabilities or from diverse socioeconomic    backgrounds
 
 Examples of unacceptable behavior by participants include:
 
@@ -20,6 +21,7 @@ Examples of unacceptable behavior by participants include:
 * Trolling, insulting/derogatory comments, and personal or political attacks
 * Public or private harassment
 * Publishing others' private information, such as a physical or electronic address, without explicit permission
+* Discrimination in any form, whether overt or covert
 * Other conduct which could reasonably be considered inappropriate in a professional setting
 
 ## Our Responsibilities
@@ -27,6 +29,23 @@ Examples of unacceptable behavior by participants include:
 Project maintainers are responsible for clarifying the standards of acceptable behavior and are expected to take appropriate and fair corrective action in response to any instances of unacceptable behavior.
 
 Project maintainers have the right and responsibility to remove, edit, or reject comments, commits, code, wiki edits, issues, and other contributions that are not aligned to this Code of Conduct, or to ban temporarily or permanently any contributor for other behaviors that they deem inappropriate, threatening, offensive, or harmful.
+
+In situations where there is a conflict, maintainers are expected to work towards a restorative resolution and ensure all parties have an opportunity to be heard.
+
+## Reporting
+
+Unacceptable behaviors will be reported to the project maintainers:
+
+* Gunisha Kaur
+* Jenson Chang
+* Long Nguyen
+* Han Wang
+
+Complaints will be reviewed and investigated fairly and promptly by the project maintainers. Maintain confidentiality with regard to the reporter of an incident, as well as the individuals involved in the report. This ensures a fair process for all parties involved.
+
+Project maintainers will take action against violations of the Code of Conduct. This may include warnings, temporary bans, or permanent bans.
+
+This Code of Conduct applies both within project spaces and in public spaces when an individual is representing the project or its community.
 
 ## Scope
 

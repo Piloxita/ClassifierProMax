@@ -1,5 +1,7 @@
 # classifierpromax
 
+<img src="./img/classifierpromax_logo.png" alt="drawing" width="200"/>
+
 classifierpromax is a scikit-learn wrapper library that helps to train and optimize multiple classifier models in parallel.
 
 `classifier_trainer()`:

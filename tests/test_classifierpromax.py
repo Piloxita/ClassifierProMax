@@ -1,1 +1,0 @@
-from classifierpromax import classifierpromax

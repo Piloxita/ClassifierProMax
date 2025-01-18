@@ -21,8 +21,7 @@ def Feature_Selector(preprocessor, trained_models, X_train, y_train, method='RFE
     feature_selected_models = {}
 
     # Drop dummy model
-    if 'dummy' in trained_models.keys():
-      trained_models.pop('dummy')
+    trained_models.pop('dummy', None)
 
     for model_name, model in trained_models.items():
         # Extract the base estimator from the pipeline
@@ -32,7 +31,7 @@ def Feature_Selector(preprocessor, trained_models, X_train, y_train, method='RFE
             if n_features_to_select is None:
                 raise ValueError("`n_features_to_select` must be provided for RFE.")
             # Apply RFE
-            selector = RFE(Ridge(), n_features_to_select=n_features_to_select)
+            selector = RFE(base_model, n_features_to_select=n_features_to_select)
             # Create a new pipeline with the preprocessor, selector, and base model
             new_model = make_pipeline(preprocessor, selector, base_model)
             new_model.fit(X_train, y_train)
@@ -42,7 +41,7 @@ def Feature_Selector(preprocessor, trained_models, X_train, y_train, method='RFE
             # Apply VarianceThreshold
             selector = VarianceThreshold(threshold=0.0)  # Adjust threshold if needed
             new_model = make_pipeline(preprocessor, selector, base_model)
-            new_model.fit(X_train)
+            new_model.fit(X_train, y_train)
             feature_selected_models[model_name] = new_model
 
         elif method == 'Pearson':

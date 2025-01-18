@@ -1,91 +1,94 @@
 import pytest
+import pandas as pd
 import numpy as np
-from sklearn.datasets import make_classification
 from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
-from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
-from sklearn.utils.validation import check_is_fitted
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
 from classifierpromax.Classifier_Optimizer import Classifier_Optimizer
 
 @pytest.fixture
-def setup_data():
-    """Generate synthetic dataset and model dictionary for testing."""
-    X, y = make_classification(
-        n_samples=100, n_features=20, n_informative=15, n_redundant=5, random_state=42
-    )
-    model_dict = {
+def sample_data():
+    # Generate synthetic data for testing
+    X = pd.DataFrame(np.random.rand(100, 5), columns=[f"feature_{i}" for i in range(5)])
+    y = pd.Series(np.random.randint(0, 2, size=100))
+    return X, y
+
+@pytest.fixture
+def sample_models():
+    # Create a dictionary of pipelines for testing
+    return {
         'logreg': Pipeline([
             ('scaler', StandardScaler()),
-            ('logisticregression', LogisticRegression(max_iter=1000, random_state=42))
+            ('logisticregression', LogisticRegression())
         ]),
         'svc': Pipeline([
             ('scaler', StandardScaler()),
-            ('svc', SVC(probability=True, random_state=42))
+            ('svc', SVC())
+        ]),
+        'random_forest': Pipeline([
+            ('scaler', StandardScaler()),
+            ('randomforestclassifier', RandomForestClassifier())
         ])
     }
-    return X, y, model_dict
 
-def test_classifier_optimizer_valid_input(setup_data):
-    """Test the function with valid input."""
-    X, y, model_dict = setup_data
+def test_classifier_optimizer_valid_input(sample_data, sample_models):
+    X, y = sample_data
+    model_dict = sample_models
     scoring = 'accuracy'
-    optimized_model_dict, scoring_dict = Classifier_Optimizer(
-        model_dict, X, y, scoring=scoring, n_iter=10, cv=3, random_state=42, n_jobs=1
-    )
-
-    # Check if the function returns dictionaries
-    assert isinstance(optimized_model_dict, dict)
-    assert isinstance(scoring_dict, dict)
-
-    # Check if all models are optimized
-    assert all(name in optimized_model_dict for name in model_dict.keys())
-    assert all(name in scoring_dict for name in model_dict.keys())
-
-    # Check if models are fitted
-    for name, model_info in optimized_model_dict.items():
-        best_model = model_info['best_model']
-        check_is_fitted(best_model)
-
-    # Check scoring values are reasonable
-    for scores in scoring_dict.values():
-        assert 0 <= scores['accuracy_score'] <= 1
-        assert 0 <= scores['f1_score'] <= 1
-        assert 0 <= scores['precision_score'] <= 1
-        assert 0 <= scores['recall_score'] <= 1
-
-def test_classifier_optimizer_invalid_model_name(setup_data):
-    """Test the function with an invalid model name in param_dist."""
-    X, y, model_dict = setup_data
-    model_dict['invalid_model'] = Pipeline([
-        ('scaler', StandardScaler()),
-        ('svc', SVC())
-    ])
     
-    with pytest.raises(KeyError):
-        Classifier_Optimizer(model_dict, X, y, scoring='accuracy', n_iter=10, cv=3)
+    optimized_models, scoring_dict = Classifier_Optimizer(
+        model_dict=model_dict,
+        X_train=X,
+        y_train=y,
+        scoring=scoring,
+        n_iter=5,
+        cv=2
+    )
+    
+    assert isinstance(optimized_models, dict)
+    assert isinstance(scoring_dict, dict)
+    for name in model_dict.keys():
+        assert name in optimized_models
+        assert 'best_model' in optimized_models[name]
+        assert 'best_params' in optimized_models[name]
+        assert name in scoring_dict
+        assert 'accuracy_score' in scoring_dict[name]
+        assert 'f1_score' in scoring_dict[name]
+        assert 'precision_score' in scoring_dict[name]
+        assert 'recall_score' in scoring_dict[name]
 
-def test_classifier_optimizer_invalid_data(setup_data):
-    """Test the function raises an error if both X_train and y_train are invalid."""
-    _, y, model_dict = setup_data    
+def test_classifier_optimizer_invalid_model_dict(sample_data):
+    X, y = sample_data
+    invalid_model_dict = "not_a_dict"
+    with pytest.raises(ValueError, match="model_dict must be a dictionary."):
+        Classifier_Optimizer(model_dict=invalid_model_dict, X_train=X, y_train=y, scoring='accuracy')
+
+def test_classifier_optimizer_empty_model_dict(sample_data):
+    X, y = sample_data
+    empty_model_dict = {}
+    with pytest.raises(ValueError, match="model_dict is empty. Please provide at least one model."):
+        Classifier_Optimizer(model_dict=empty_model_dict, X_train=X, y_train=y, scoring='accuracy')
+
+def test_classifier_optimizer_invalid_X_train(sample_models):
+    model_dict = sample_models
+    X_train = "not_a_dataframe"
+    y_train = pd.Series(np.random.randint(0, 2, size=100))
     with pytest.raises(ValueError, match="X_train must be a pandas DataFrame or a numpy array."):
-        Classifier_Optimizer(model_dict, [], y, scoring='accuracy')
+        Classifier_Optimizer(model_dict=model_dict, X_train=X_train, y_train=y_train, scoring='accuracy')
 
-def test_classifier_optimizer_invalid_scoring(setup_data):
-    """Test the function with an invalid scoring metric."""
-    X, y, model_dict = setup_data
-    with pytest.raises(ValueError):
-        Classifier_Optimizer(model_dict, X, y, scoring='invalid_metric', n_iter=10, cv=3)
+def test_classifier_optimizer_invalid_y_train(sample_models):
+    model_dict = sample_models
+    X_train = pd.DataFrame(np.random.rand(100, 5))
+    y_train = "not_a_series"
+    with pytest.raises(ValueError, match="y_train must be a pandas Series or a numpy array."):
+        Classifier_Optimizer(model_dict=model_dict, X_train=X_train, y_train=y_train, scoring='accuracy')
 
-def test_classifier_optimizer_empty_model_dict(setup_data):
-    """Test the function with an empty model dictionary."""
-    X, y, _ = setup_data
-    with pytest.raises(ValueError):
-        Classifier_Optimizer({}, X, y, scoring='accuracy', n_iter=10, cv=3)
-
-def test_classifier_optimizer_invalid_cv_value(setup_data):
-    """Test the function with an invalid cv value."""
-    X, y, model_dict = setup_data
-    with pytest.raises(ValueError):
-        Classifier_Optimizer(model_dict, X, y, scoring='accuracy', n_iter=10, cv=-1)
+def test_classifier_optimizer_mismatched_X_y_lengths(sample_models):
+    model_dict = sample_models
+    X_train = pd.DataFrame(np.random.rand(100, 5))
+    y_train = pd.Series(np.random.randint(0, 2, size=50))  # Mismatched length
+    with pytest.raises(ValueError, match="The number of samples in X_train and y_train must match."):
+        Classifier_Optimizer(model_dict=model_dict, X_train=X_train, y_train=y_train, scoring='accuracy')

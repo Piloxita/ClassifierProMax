@@ -1,11 +1,11 @@
 import pandas as pd
 import numpy as np
-from scipy.stats import uniform, lognorm, loguniform, randint
+from scipy.stats import uniform, loguniform, randint
 from sklearn.pipeline import Pipeline
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
 
-def Classifier_Optimizer(model_dict, X_train, y_train, scoring, n_iter=100, cv=5, random_state=42, n_jobs=-1):
+def Classifier_Optimizer(model_dict, X_train, y_train, scoring='accuracy', n_iter=100, cv=5, random_state=42, n_jobs=-1):
     """
     Perform hyperparameter optimization for multiple classification models using RandomizedSearchCV.
 
@@ -35,6 +35,21 @@ def Classifier_Optimizer(model_dict, X_train, y_train, scoring, n_iter=100, cv=5
     scoring_dict : dict
         A dictionary containing training and test scores for each classifier.
     """
+
+    param_dist = {
+        'logreg' : {
+            'logisticregression__C': loguniform(1e-2, 1e3),
+            'logisticregression__class_weight': [None, 'balanced']
+        },
+        'svc' : {
+            'svc__C': loguniform(1e-2, 1e3),
+            'svc__class_weight': [None, 'balanced']
+        },
+        'random_forest' : {
+            'randomforestclassifier__n_estimators': randint(10,50),
+            'randomforestclassifier__max_depth': randint(5,15)
+        }
+    }   
     
     # Validate model_dict
     if not isinstance(model_dict, dict):
@@ -50,20 +65,15 @@ def Classifier_Optimizer(model_dict, X_train, y_train, scoring, n_iter=100, cv=5
     if not isinstance(X_train, (pd.DataFrame, np.ndarray)):
         raise ValueError("X_train must be a pandas DataFrame or a numpy array.")
     if not isinstance(y_train, (pd.Series, np.ndarray)):
-        raise ValueError("y_train must be a pandas Series or DataFrame.")
+        raise ValueError("y_train must be a pandas Series or a numpy array.")
+    if X_train.size == 0 or y_train.size == 0:
+        raise ValueError("X_train and y_train cannot be empty.")
     if X_train.shape[0] != len(y_train):
         raise ValueError("The number of samples in X_train and y_train must match.")
-
-    param_dist = {
-        'logreg' : {
-            'logisticregression__C': loguniform(1e-2, 1e3),
-            'logisticregression__class_weight': [None, 'balanced']
-        },
-        'svc' : {
-            'svc__C': loguniform(1e-2, 1e3),
-            'svc__class_weight': [None, 'balanced']
-        }
-    }   
+    
+    # Check if the model names match the param_dist keys
+    if not all(name in param_dist for name in model_dict):
+        raise ValueError("Each model name in model_dict must have corresponding hyperparameters in param_dist.")
 
     optimized_model_dict = {}
     scoring_dict = {}

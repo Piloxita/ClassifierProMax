@@ -1,10 +1,17 @@
+import pytest
+import numpy as np
+import pandas as pd
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.pipeline import make_pipeline
+from sklearn.feature_selection import RFE
+
 def Feature_Selector(X_train, y_train, trained_models, method='RFE', scoring='accuracy', n_features_to_select=None):
   """
   Selects features for multiple classification models using various methods.
   Args:
       X_train (array-like or DataFrame): Training feature set.
       y_train (array-like or Series): Training target labels.
-      trained_models (dict): A dictionary containing the names and corresponding trained classification models.
+      trained_models (dict): A dictionary containing the names and corresponding trained best classification models.
       method (str, optional): Feature selection method. Defaults to 'RFE'. Can be 'RFE', 'Backward SFS', 'Forward SFS', 'Var Threshold', or 'Pearson'.
       scoring (str, optional): Scoring metric used for model selection during feature selection. Defaults to 'accuracy'.
       n_features_to_select (int, optional): The number of features to select (for methods like RFE). If None, all features are used for model selection. Defaults to None.
@@ -16,7 +23,7 @@ def Feature_Selector(X_train, y_train, trained_models, method='RFE', scoring='ac
   feature_selected_models = {}
   for model_name, model in trained_models.items():
     if method == 'RFE':
-      # Using Recursive feature elimination method
+      # Using Recursive feature elimination method (RFE)
       selector = RFE(model, n_features_to_select=n_features_to_select)
       new_model = make_pipeline(selector, model.steps[-1][1])  
       feature_selected_models[model_name] = new_model

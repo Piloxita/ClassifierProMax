@@ -27,34 +27,39 @@ $ pip install classifierpromax
 ## Usage
 1. Training baseline models
 ```python
-from classifierpromax import classifier_trainer
-from sklearn.model_selection import train_test_split
+import pandas as pd
+import numpy as np
+from classifierpromax.Classifier_Trainer import Classifier_Trainer
+from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 
-X, y = train_test_split(data, test_size=0.2)
+# Dummy data
+X = pd.DataFrame(np.random.rand(100, 5), columns=[f"feature_{i}" for i in range(5)])
+y = pd.Series(np.random.randint(0, 2, size=100))
+
+# Define preprocessor
+preprocessor = StandardScaler()
 
 # Function will return a dictionary of models
-baseline_models, baseline_score = classifier_trainer(StandardScaler(), X, y, pos_label=1, seed=123)
+baseline_models, baseline_score = Classifier_Trainer(preprocessor, X, y, pos_label=1, seed=123)
 ```
 2. Feature selection
 ```python
-from classifierpromax import feature_selector
+from classifierpromax.Feature_Selector import Feature_Selector
 
 # Function will return a dictionary of models
-fs_models= feature_selector(baseline_models, 'RFE')
+fs_models = Feature_Selector(preprocessor, models, X, y, n_features_to_select=3)
 ```
 3. Hyperparameter optimization
 ```python
-from classifierpromax import classifier_optimizer
+from classifierpromax.Classifier_Optimizer import Classifier_Optimizer
 
-score = "f1"
-
-# Function will return a dictionary of models
-opt_models, opt_score = classifier_optimizer(fs_models, X, y, score)
+# Function will return a dictionary of optimized models and another dictionary with the scores
+opt_models, opt_score = Classifier_Optimizer(fs_models, X, y)
 ```
 4. Results summary
 ```python
-from classifierpromax import results_handler
+from classifierpromax.Results_Handler import Results_Handler
 
 # Function will score the models and return a summary table
 summary = results_handler(opt_score)

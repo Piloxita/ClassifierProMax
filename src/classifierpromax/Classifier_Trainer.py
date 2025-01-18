@@ -84,7 +84,7 @@ def Classifier_Trainer(preprocessor, X_train, y_train, pos_label, seed, cv=5, me
     models = {
         "dummy": make_pipeline(preprocessor, DummyClassifier(strategy="most_frequent")),
         "logreg": make_pipeline(preprocessor, LogisticRegression(random_state=seed, max_iter=1000)),
-        "svc": make_pipeline(preprocessor, SVC(random_state=seed)),
+        "svc": make_pipeline(preprocessor, SVC(kernel='linear', random_state=seed)),
         "random_forest": make_pipeline(preprocessor, RandomForestClassifier(random_state=seed)),
     }
 

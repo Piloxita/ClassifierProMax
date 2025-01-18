@@ -1,15 +1,14 @@
 from sklearn.pipeline import make_pipeline
 from sklearn.feature_selection import RFE, VarianceThreshold, SelectKBest, f_classif
-from sklearn.linear_model import Ridge
 
 def Feature_Selector(preprocessor, trained_models, X_train, y_train, method='RFE', scoring='accuracy', n_features_to_select=None):
     """
     Selects features for multiple classification models using various methods.
     Args:
+        preprocessor (Pipeline or Transformer): Preprocessing pipeline to include in the final pipeline.
+        trained_models (dict): A dictionary containing the names and corresponding trained best classification models.
         X_train (array-like or DataFrame): Training feature set.
         y_train (array-like or Series): Training target labels.
-        trained_models (dict): A dictionary containing the names and corresponding trained best classification models.
-        preprocessor (Pipeline or Transformer): Preprocessing pipeline to include in the final pipeline.
         method (str, optional): Feature selection method. Defaults to 'RFE'. Can be 'RFE', 'Backward SFS', 'Forward SFS', 'Var Threshold', or 'Pearson'.
         scoring (str, optional): Scoring metric used for model selection during feature selection. Defaults to 'accuracy'.
         n_features_to_select (int, optional): The number of features to select (for methods like RFE). Defaults to None.

@@ -52,8 +52,6 @@ def test_classifier_optimizer_valid_input(sample_data, sample_models):
     assert isinstance(scoring_dict, dict)
     for name in model_dict.keys():
         assert name in optimized_models
-        assert 'best_model' in optimized_models[name]
-        assert 'best_params' in optimized_models[name]
         assert name in scoring_dict
         assert 'accuracy_score' in scoring_dict[name]
         assert 'f1_score' in scoring_dict[name]

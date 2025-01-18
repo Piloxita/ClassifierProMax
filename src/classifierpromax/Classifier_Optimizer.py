@@ -50,7 +50,7 @@ def Classifier_Optimizer(model_dict, X_train, y_train, scoring='accuracy', n_ite
             'randomforestclassifier__max_depth': randint(5,15)
         }
     }   
-    
+
     # Validate model_dict
     if not isinstance(model_dict, dict):
         raise ValueError("model_dict must be a dictionary.")
@@ -75,6 +75,9 @@ def Classifier_Optimizer(model_dict, X_train, y_train, scoring='accuracy', n_ite
     if not all(name in param_dist for name in model_dict):
         raise ValueError("Each model name in model_dict must have corresponding hyperparameters in param_dist.")
 
+    # Drop dummy model
+    model_dict.pop('dummy', None)
+
     optimized_model_dict = {}
     scoring_dict = {}
 
@@ -97,10 +100,7 @@ def Classifier_Optimizer(model_dict, X_train, y_train, scoring='accuracy', n_ite
         best_model = search.best_estimator_
         y_pred = best_model.predict(X_train)
         
-        optimized_model_dict[name] = {
-            'best_model': best_model,
-            'best_params': search.best_params_
-        }
+        optimized_model_dict[name] = best_model
 
         scoring_dict[name] = {
             'accuracy_score' : accuracy_score(y_pred, y_train),

@@ -17,6 +17,13 @@ from classifierpromax.Classifier_Trainer import Classifier_Trainer
 # Metrics and Scoring
 from sklearn.metrics import make_scorer, precision_score, recall_score, f1_score  # For metrics
 
+
+# Suppress UndefinedMetricWarning of dummy
+import warnings
+from sklearn.exceptions import UndefinedMetricWarning
+
+warnings.filterwarnings("ignore", category=UndefinedMetricWarning)
+
 # Generate a synthetic dataset for testing
 @pytest.fixture
 def sample_data():
@@ -86,7 +93,7 @@ def test_custom_metrics(sample_data, preprocessor):
     seed = 42
 
     custom_metrics = {
-        "precision": make_scorer(precision_score, pos_label=pos_label),
+        "precision": make_scorer(precision_score, pos_label=pos_label, zero_division=0),
         "recall": make_scorer(recall_score, pos_label=pos_label),
         "f1": make_scorer(f1_score, pos_label=pos_label),
     }

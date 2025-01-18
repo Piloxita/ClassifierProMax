@@ -1,57 +1,63 @@
 # Core Libraries
-import os  # For file path operations
-
-# Data Manipulation
-import pandas as pd  # For handling DataFrame operations
+import os
+import pandas as pd
 
 # Machine Learning
-from sklearn.dummy import DummyClassifier  # For dummy classification model
-from sklearn.linear_model import LogisticRegression  # For logistic regression model
-from sklearn.svm import SVC  # For support vector classifier
-from sklearn.pipeline import make_pipeline  # For creating pipelines
-from sklearn.ensemble import RandomForestClassifier  # For random forest classifier
-from sklearn.model_selection import cross_validate  # For cross-validation
+from sklearn.dummy import DummyClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
+from sklearn.pipeline import make_pipeline
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_validate
 
 # Metrics and Scoring
-from sklearn.metrics import make_scorer, precision_score, recall_score, f1_score  # For metrics
+from sklearn.metrics import make_scorer, precision_score, recall_score, f1_score
 
 def Classifier_Trainer(preprocessor, X_train, y_train, pos_label, seed, cv=5, metrics=None):
     """
-    Trains multiple classifiers on the provided dataset using cross-validation and returns a dictionary
-    of trained models and a dictionary of scoring metrics.
+    Train multiple machine learning classifiers using cross-validation and return trained models
+    and evaluation metrics.
+
+    This function applies a preprocessing pipeline to the training data, trains several classifiers
+    using cross-validation, and evaluates their performance based on specified or default metrics.
+    It supports handling common validation checks and provides a structured summary of model scores.
 
     Parameters:
     -----------
     preprocessor : sklearn.pipeline.Pipeline or transformer
-        A preprocessing pipeline to apply transformations to the training data.
+        A preprocessing pipeline or transformer object with `fit` and `transform` methods. 
+        Used to preprocess the training data.
 
     X_train : array-like of shape (n_samples, n_features)
-        The training input data.
+        Training input data. Each row represents a sample, and each column represents a feature.
 
     y_train : array-like of shape (n_samples,)
-        The target labels for training.
+        Target labels corresponding to the training data.
 
     pos_label : int or str
-        The positive class label used for metrics calculation such as precision and recall.
+        The positive class label used for calculating metrics like precision, recall, and F1 score.
 
     seed : int
-        Random seed for reproducibility.
+        Random seed for ensuring reproducibility in model training and evaluation.
 
     cv : int, default=5
-        Number of cross-validation folds.
+        Number of folds for cross-validation. Determines how the data is split for training and validation.
 
     metrics : dict, optional
-        A dictionary containing scoring metrics to use during evaluation. If None, defaults to accuracy,
-        precision, recall, and f1 score.
+        A dictionary where keys are metric names (strings) and values are either strings representing
+        predefined metrics (e.g., "accuracy") or callable scoring functions (e.g., `make_scorer`).
+        If None, the default metrics include accuracy, precision, recall, and F1 score.
 
     Returns:
     --------
     trained_model_dict : dict
-        A dictionary where keys are model names and values are the corresponding trained models.
+        A dictionary containing the trained models. Keys are model names (e.g., "logreg", "svc"), and
+        values are the trained model objects.
 
     scoring_dict : dict
-        A dictionary where keys are model names and values are the corresponding scoring metrics calculated
-        using the specified metrics during cross-validation.
+        A dictionary containing evaluation metrics for each model. Keys are model names, and values
+        are pandas DataFrames summarizing the mean and standard deviation of each metric across
+        cross-validation folds.
     """
     # Validate preprocessor
     if not all(hasattr(preprocessor, method) for method in ["fit", "transform"]):
@@ -75,7 +81,7 @@ def Classifier_Trainer(preprocessor, X_train, y_train, pos_label, seed, cv=5, me
     if metrics is None:
         metrics = {
             "accuracy": "accuracy",
-            "precision": make_scorer(precision_score, pos_label=pos_label),
+            "precision": make_scorer(precision_score, pos_label=pos_label, zero_division=0),
             "recall": make_scorer(recall_score, pos_label=pos_label),
             "f1": make_scorer(f1_score, pos_label=pos_label),
         }

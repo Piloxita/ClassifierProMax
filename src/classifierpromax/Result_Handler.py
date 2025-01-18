@@ -1,38 +1,25 @@
-def Result_Handler(scoring_dict):
-    """
-    Handles the results of cross-validation scoring by concatenating the input dictionary of scoring data 
-    into two DataFrames: one for the mean and one for the standard deviation. The function prints these DataFrames 
-    and returns them as a tuple.
+import pandas as pd
 
-    Parameters:
-    ----------
-    scoring_dict (dict): A dictionary containing the scoring results, where the keys are column names 
-                          and the values are the corresponding scoring data for each fold of cross-validation.
+def Result_Handler(scoring_dict, models=None):
+    if not scoring_dict:
+        return pd.DataFrame(columns=[], index=['accuracy', 'precision', 'recall', 'f1'])
 
-    Returns:
-    -------
-    tuple: A tuple containing two DataFrames:
-           - mean_df: DataFrame containing the mean of the scores.
-           - std_df: DataFrame containing the standard deviation of the scores.
-    
-    Example:
-    --------
-    # Example of scoring_dict containing the results for 5 folds
-    scoring_dict = {
-        'mean': {'fold_1': [0.85], 'fold_2': [0.87], 'fold_3': [0.86], 'fold_4': [0.84], 'fold_5': [0.88]},
-        'std': {'fold_1': [0.02], 'fold_2': [0.01], 'fold_3': [0.02], 'fold_4': [0.01], 'fold_5': [0.01]}
-    }
 
-    mean_df, std_df = Result_Handler(scoring_dict)
-    print(mean_df)
-    print(std_df)
-    """
+    index = ['accuracy', 'precision', 'recall', 'f1'] 
+    data = {model: list(scores.values()) for model, scores in scoring_dict.items()}
 
-    # # Assuming that 'scoring_dict' contains two parts: mean and standard deviation
-    std_df = pd.concat(scoring_dict['std'], axis='columns').reset_index()
-    mean_df = pd.concat(scoring_dict['mean'], axis='columns').reset_index()
+ 
+    if models:
+        for model_name, model in models.items():
+            for param, value in model.get_params().items():    
+                data.setdefault(model_name, []).append(value)
+                index.append(f"{model_name}__{param}")
 
-    print(std_df)
-    print(mean_df)
+    num_rows = len(index)
+    for model in data:
+        if len(data[model]) != num_rows:
 
-    return mean_df, std_df
+            data[model].extend([None] * (num_rows - len(data[model])))
+
+
+    return pd.DataFrame(data, index=index)

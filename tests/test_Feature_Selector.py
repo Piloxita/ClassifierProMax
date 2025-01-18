@@ -32,7 +32,7 @@ def preprocessor():
 def test_rfe_selection(sample_data, trained_models, preprocessor):
     X, y = sample_data
     selected_models = Feature_Selector(
-        X, y, trained_models, preprocessor=preprocessor, method='RFE', n_features_to_select=5
+        preprocessor, trained_models, X, y, method='RFE', n_features_to_select=5
     )
     assert "RandomForest" in selected_models
     assert "LogisticRegression" in selected_models
@@ -42,7 +42,7 @@ def test_rfe_selection(sample_data, trained_models, preprocessor):
 def test_variance_threshold(sample_data, trained_models, preprocessor):
     X, y = sample_data
     selected_models = Feature_Selector(
-        X, y, trained_models, preprocessor=preprocessor, method='Var Threshold'
+        preprocessor, trained_models, X, y, method='Var Threshold'
     )
     assert "RandomForest" in selected_models
     assert "LogisticRegression" in selected_models
@@ -52,7 +52,7 @@ def test_variance_threshold(sample_data, trained_models, preprocessor):
 def test_pearson_selection(sample_data, trained_models, preprocessor):
     X, y = sample_data
     selected_models = Feature_Selector(
-        X, y, trained_models, preprocessor=preprocessor, method='Pearson', n_features_to_select=5
+        preprocessor, trained_models, X, y, method='Pearson', n_features_to_select=5
     )
     assert "RandomForest" in selected_models
     assert "LogisticRegression" in selected_models
@@ -63,7 +63,7 @@ def test_invalid_method(sample_data, trained_models, preprocessor):
     X, y = sample_data
     with pytest.raises(ValueError, match="Invalid feature selection method: InvalidMethod"):
         Feature_Selector(
-            X, y, trained_models, preprocessor=preprocessor, method='InvalidMethod'
+            preprocessor, trained_models, X, y, method='InvalidMethod'
         )
 
 # Test missing n_features_to_select for RFE
@@ -71,5 +71,5 @@ def test_missing_n_features_to_select(sample_data, trained_models, preprocessor)
     X, y = sample_data
     with pytest.raises(ValueError, match="`n_features_to_select` must be provided for RFE."):
         Feature_Selector(
-            X, y, trained_models, preprocessor=preprocessor, method='RFE'
+            preprocessor, trained_models, X, y, method='RFE'
         )

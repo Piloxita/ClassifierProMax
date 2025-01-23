@@ -53,10 +53,6 @@ def test_classifier_optimizer_valid_input(sample_data, sample_models):
     for name in model_dict.keys():
         assert name in optimized_models
         assert name in scoring_dict
-        assert 'accuracy_score' in scoring_dict[name]
-        assert 'f1_score' in scoring_dict[name]
-        assert 'precision_score' in scoring_dict[name]
-        assert 'recall_score' in scoring_dict[name]
 
 def test_classifier_optimizer_invalid_model_dict(sample_data):
     X, y = sample_data

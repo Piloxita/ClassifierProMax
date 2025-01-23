@@ -2,10 +2,10 @@ import pandas as pd
 import numpy as np
 from scipy.stats import uniform, loguniform, randint
 from sklearn.pipeline import Pipeline
-from sklearn.model_selection import RandomizedSearchCV
-from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
+from sklearn.model_selection import RandomizedSearchCV, cross_validate
+from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, make_scorer
 
-def Classifier_Optimizer(model_dict, X_train, y_train, scoring='accuracy', n_iter=100, cv=5, random_state=42, n_jobs=-1):
+def Classifier_Optimizer(model_dict, X_train, y_train, scoring=None, n_iter=100, cv=5, random_state=42, n_jobs=-1):
     """
     Perform hyperparameter optimization for multiple classification models using RandomizedSearchCV.
 
@@ -49,7 +49,16 @@ def Classifier_Optimizer(model_dict, X_train, y_train, scoring='accuracy', n_ite
             'randomforestclassifier__n_estimators': randint(10,50),
             'randomforestclassifier__max_depth': randint(5,15)
         }
-    }   
+    }
+
+    # Default metrics if not provided
+    if scoring is None:
+        scoring = {
+            "accuracy": "accuracy",
+            "precision": make_scorer(precision_score, zero_division=0, average='weighted'),
+            "recall": make_scorer(recall_score, average='weighted'),
+            "f1": make_scorer(f1_score, average='weighted'),
+        }
 
     # Validate model_dict
     if not isinstance(model_dict, dict):
@@ -88,25 +97,28 @@ def Classifier_Optimizer(model_dict, X_train, y_train, scoring='accuracy', n_ite
         search = RandomizedSearchCV(
             estimator=model, 
             param_distributions=param_dist[name], 
-            scoring=scoring, 
+            scoring=make_scorer(f1_score, average='weighted'), 
             n_iter=n_iter, 
             cv=cv, 
             random_state=random_state,
-            n_jobs=n_jobs
+            n_jobs=n_jobs,
+            return_train_score=True
         )
         
         search.fit(X_train, y_train)
+        search.best_params_
         
         best_model = search.best_estimator_
-        y_pred = best_model.predict(X_train)
-        
         optimized_model_dict[name] = best_model
 
-        scoring_dict[name] = {
-            'accuracy_score' : accuracy_score(y_pred, y_train),
-            'f1_score' : f1_score(y_pred, y_train),
-            'precision_score' : precision_score(y_pred, y_train),
-            'recall_score' : recall_score(y_pred, y_train)
-        }
-        
+        cv_results = cross_validate(
+            best_model, 
+            X_train, 
+            y_train, 
+            cv=cv, 
+            scoring=scoring, 
+            return_train_score=True,
+            error_score='raise'
+        )
+        scoring_dict[name] = pd.DataFrame(cv_results).agg(['mean', 'std']).T
     return optimized_model_dict, scoring_dict

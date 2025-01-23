@@ -81,9 +81,9 @@ def Classifier_Trainer(preprocessor, X_train, y_train, pos_label, seed, cv=5, me
     if metrics is None:
         metrics = {
             "accuracy": "accuracy",
-            "precision": make_scorer(precision_score, pos_label=pos_label, zero_division=0),
-            "recall": make_scorer(recall_score, pos_label=pos_label),
-            "f1": make_scorer(f1_score, pos_label=pos_label),
+            "precision": make_scorer(precision_score, pos_label=pos_label, zero_division=0, average='weighted'),
+            "recall": make_scorer(recall_score, pos_label=pos_label, average='weighted'),
+            "f1": make_scorer(f1_score, pos_label=pos_label, average='weighted'),
         }
 
     # Define classifiers

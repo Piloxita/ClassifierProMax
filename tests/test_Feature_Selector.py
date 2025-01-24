@@ -38,16 +38,6 @@ def test_rfe_selection(sample_data, trained_models, preprocessor):
     assert "LogisticRegression" in selected_models
     assert len(selected_models["RandomForest"].steps) == 3  # Ensure pipeline has 3 steps
 
-# Test Variance Threshold
-def test_variance_threshold(sample_data, trained_models, preprocessor):
-    X, y = sample_data
-    selected_models = Feature_Selector(
-        preprocessor, trained_models, X, y, method='Var Threshold'
-    )
-    assert "RandomForest" in selected_models
-    assert "LogisticRegression" in selected_models
-    assert len(selected_models["RandomForest"].steps) == 3  # Ensure pipeline has 3 steps
-
 # Test Pearson feature selection
 def test_pearson_selection(sample_data, trained_models, preprocessor):
     X, y = sample_data

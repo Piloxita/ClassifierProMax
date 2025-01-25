@@ -7,34 +7,71 @@ from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_sc
 
 def Classifier_Optimizer(model_dict, X_train, y_train, scoring=None, n_iter=100, cv=5, random_state=42, n_jobs=-1):
     """
-    Perform hyperparameter optimization for multiple classification models using RandomizedSearchCV.
+    Optimizes a dictionary of scikit-learn Pipeline classifiers using RandomizedSearchCV and evaluates their performance.
 
-    Parameters:
+    Parameters
     ----------
     model_dict : dict
-        A dictionary containing the names and corresponding classifier pipeline models.
-    X_train : array-like or DataFrame
-        Training feature set.
-    y_train : array-like or Series
-        Training target labels.
-    scoring : str or callable
-        Metric used to evaluate model performance (e.g., 'accuracy', 'f1', etc.).
-    n_iter : int, optional, default=100
-        Number of parameter settings sampled for RandomizedSearchCV.
-    cv : int, optional, default=5
-        Number of cross-validation folds.
-    random_state : int, optional, default=42
-        Random seed to ensure reproducibility.
-    n_jobs : int, optional, default=-1
-        Number of CPU cores used for parallel processing. -1 uses all available cores.
+        A dictionary where keys are model names (str) and values are scikit-learn Pipeline objects.
+        Each pipeline must contain a classifier whose hyperparameters are defined in `param_dist`.
 
-    Returns:
+    X_train : pandas.DataFrame or numpy.ndarray
+        The feature matrix for training the classifiers. Must have the same number of samples as `y_train`.
+
+    y_train : pandas.Series or numpy.ndarray
+        The target labels for training the classifiers. Must have the same number of samples as `X_train`.
+
+    scoring : dict, optional
+        A dictionary specifying scoring metrics to evaluate the classifiers during cross-validation. 
+        Default is None, which uses the following metrics:
+            - "accuracy"
+            - "precision" (weighted)
+            - "recall" (weighted)
+            - "f1" (weighted)
+
+    n_iter : int, optional
+        The number of parameter settings sampled for RandomizedSearchCV. Default is 100.
+
+    cv : int, optional
+        The number of cross-validation folds for both RandomizedSearchCV and cross_validate. Default is 5.
+
+    random_state : int, optional
+        Random seed for reproducibility of RandomizedSearchCV. Default is 42.
+
+    n_jobs : int, optional
+        The number of jobs to run in parallel for RandomizedSearchCV. Default is -1 (use all available processors).
+
+    Returns
     -------
     optimized_model_dict : dict
-        A dictionary containing the optimized models and their best parameters.
+        A dictionary containing the best estimators for each classifier after hyperparameter optimization.
+
     scoring_dict : dict
-        A dictionary containing training and test scores for each classifier.
+        A dictionary containing cross-validation results for each optimized model, with metrics aggregated by mean and standard deviation.
+
+    Examples
+    --------
+    >>> from sklearn.pipeline import Pipeline
+    >>> from sklearn.linear_model import LogisticRegression
+    >>> from sklearn.svm import SVC
+    >>> from sklearn.ensemble import RandomForestClassifier
+    >>> from sklearn.preprocessing import StandardScaler
+    >>> model_dict = {
+    ...     'logreg': Pipeline([
+    ...         ('scaler', StandardScaler()),
+    ...         ('logisticregression', LogisticRegression())
+    ...     ]),
+    ...     'svc': Pipeline([
+    ...         ('scaler', StandardScaler()),
+    ...         ('svc', SVC())
+    ...     ]),
+    ...     'random_forest': Pipeline([
+    ...         ('randomforestclassifier', RandomForestClassifier())
+    ...     ])
+    ... }
+    >>> optimized_models, scoring_results = Classifier_Optimizer(model_dict, X_train, y_train)
     """
+
 
     param_dist = {
         'logreg' : {
@@ -47,7 +84,7 @@ def Classifier_Optimizer(model_dict, X_train, y_train, scoring=None, n_iter=100,
         },
         'random_forest' : {
             'randomforestclassifier__n_estimators': randint(10,50),
-            'randomforestclassifier__max_depth': randint(5,15)
+            'randomforestclassifier__max_depth': randint(5,10)
         }
     }
 

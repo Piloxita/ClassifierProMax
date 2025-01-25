@@ -5,7 +5,7 @@ def FeatureSelector(preprocessor, trained_models, X_train, y_train, method='RFE'
     """
     Selects features for multiple classification models using RFE or Pearson methods.
 
-    Parameters:
+    Parameters: 
     -----------
     preprocessor : sklearn.pipeline.Pipeline or Transformer
         Preprocessing pipeline to include in the final pipeline.

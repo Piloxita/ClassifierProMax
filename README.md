@@ -2,6 +2,8 @@
 
 <img src="https://github.com/UBC-MDS/ClassifierProMax/blob/75d4f39c2e75ceff955005e6d443be4151ecc40a/img/classifierpromax_logo.png?raw=true" alt="drawing" width="200"/>
 
+[![Documentation Status](https://readthedocs.org/projects/classifierpromax/badge/?version=latest)](https://classifierpromax.readthedocs.io/en/latest/?badge=latest)
+
 `classifierpromax` is a scikit-learn wrapper library that helps to train and optimize multiple classifier models in parallel.
 
 `ClassifierTrainer()`:

@@ -62,7 +62,7 @@ def ClassifierOptimizer(model_dict, X_train, y_train, scoring='f1', n_iter=100, 
     ...         ('randomforestclassifier', RandomForestClassifier())
     ...     ])
     ... }
-    >>> optimized_models, scoring_results = Classifier_Optimizer(model_dict, X_train, y_train)
+    >>> optimized_models, scoring_results = ClassifierOptimizer(model_dict, X_train, y_train)
     """
 
 

@@ -31,8 +31,6 @@ def ClassifierTrainer(preprocessor, X_train, y_train, seed, cv=5, metrics=None):
         Training input data. Each row represents a sample, and each column represents a feature.
     y_train : array-like of shape (n_samples,)
         Target labels corresponding to the training data.
-    pos_label : int or str
-        The positive class label used for calculating metrics like precision, recall, and F1 score.
     seed : int
         Random seed for ensuring reproducibility in model training and evaluation.
     cv : int, default=5

@@ -1,48 +1,71 @@
 import pytest
 import pandas as pd
-from sklearn.linear_model import LogisticRegression
-from sklearn.svm import SVC
-from sklearn.ensemble import RandomForestClassifier
 from classifierpromax.ResultHandler import ResultHandler
 
-def test_result_handler_with_hyperparameters():
-    models = {
-        "logreg": LogisticRegression(random_state=42),
-        "svc": SVC(random_state=42),
-        "random_forest": RandomForestClassifier(random_state=42)
+def test_result_handler_valid_input():
+    # Test with valid input
+    scoring_dict_trainer = {
+        "model1": pd.DataFrame({"mean": [0.85], "std": [0.03]}),
+        "model2": pd.DataFrame({"mean": [0.80], "std": [0.04]})
+    }
+    scoring_dict_optimizer = {
+        "model1": pd.DataFrame({"mean": [0.88], "std": [0.02]}),
+        "model2": pd.DataFrame({"mean": [0.83], "std": [0.03]})
     }
 
-    scoring_dict = {
-        'logreg': {'accuracy': 0.85, 'precision': 0.82, 'recall': 0.84, 'f1': 0.83},
-        'svc': {'accuracy': 0.87, 'precision': 0.86, 'recall': 0.88, 'f1': 0.87},
-        'random_forest': {'accuracy': 0.89, 'precision': 0.87, 'recall': 0.88, 'f1': 0.87}
+    # Case with std=False
+    result = ResultHandler(scoring_dict_trainer, scoring_dict_optimizer, std=False)
+    assert isinstance(result, pd.DataFrame)
+    assert "model1_baseline" in result.columns
+    assert "model1_optimized" in result.columns
+    assert result.loc[:, "model1_baseline"].iloc[0] == 0.85
+
+    # Case with std=True
+    result = ResultHandler(scoring_dict_trainer, scoring_dict_optimizer, std=True)
+    assert isinstance(result, pd.DataFrame)
+    assert ("mean" in result.columns.get_level_values(1))
+    assert ("std" in result.columns.get_level_values(1))
+
+def test_result_handler_without_optimizer():
+    # Test without scoring_dict_optimizer
+    scoring_dict_trainer = {
+        "model1": pd.DataFrame({"mean": [0.85], "std": [0.03]}),
+        "model2": pd.DataFrame({"mean": [0.80], "std": [0.04]})
     }
 
-    # Get the result from the ResultHandler
-    result_df = ResultHandler(scoring_dict, models)
+    # Call ResultHandler without scoring_dict_optimizer
+    result = ResultHandler(scoring_dict_trainer)
 
-    # Check if expected index names are present in the result DataFrame
-    expected_index = ['accuracy', 'precision', 'recall', 'f1', 'logreg__C']
-    for idx in expected_index:
-        assert idx in result_df.index, f"Index '{idx}' not found in the result DataFrame."
+    # Assertions
+    assert isinstance(result, pd.DataFrame)
+    assert "model1" in result.columns
+    assert "model2" in result.columns
 
-    # Check if the expected columns are present in the result DataFrame
-    expected_columns = ['logreg', 'svc', 'random_forest']
-    for col in expected_columns:
-        assert col in result_df.columns, f"Column '{col}' not found in the result DataFrame."
+def test_result_handler_invalid_trainer_input():
+    # Test with invalid scoring_dict_trainer
+    with pytest.raises(ValueError, match="scoring_dict_trainer must be a dictionary"):
+        ResultHandler(scoring_dict_trainer="invalid_input")
 
-def test_empty_scoring_dict_with_hyperparameters():
-    scoring_dict = {}
+def test_result_handler_invalid_optimizer_input():
+    # Test with invalid scoring_dict_optimizer
+    scoring_dict_trainer = {
+        "model1": pd.DataFrame({"mean": [0.85], "std": [0.03]})
+    }
+    with pytest.raises(ValueError, match="scoring_dict_optimizer must be a dictionary"):
+        ResultHandler(scoring_dict_trainer, scoring_dict_optimizer="invalid_input")
 
-    expected_df = pd.DataFrame(columns=[], index=['accuracy', 'precision', 'recall', 'f1'])
+def test_result_handler_invalid_dataframe():
+    # Test with invalid DataFrame in dictionaries
+    scoring_dict_trainer = {
+        "model1": "invalid_df"
+    }
+    with pytest.raises(ValueError, match="Value for key 'model1' in scoring_dict_trainer must be a pandas DataFrame"):
+        ResultHandler(scoring_dict_trainer)
 
-    result_df = ResultHandler(scoring_dict, models={})
-
-    # Check if the expected index names are present in the result DataFrame (even if empty)
-    expected_index = ['accuracy', 'precision', 'recall', 'f1']
-    for idx in expected_index:
-        assert idx in result_df.index, f"Index '{idx}' not found in the result DataFrame."
-
-    # Check that there are no columns since scoring_dict is empty
-    assert result_df.columns.empty, "Expected no columns in the result DataFrame."
-
+def test_result_handler_invalid_std_input():
+    # Test with invalid std value
+    scoring_dict_trainer = {
+        "model1": pd.DataFrame({"mean": [0.85], "std": [0.03]})
+    }
+    with pytest.raises(ValueError, match="std must be a boolean value"):
+        ResultHandler(scoring_dict_trainer, std="invalid")

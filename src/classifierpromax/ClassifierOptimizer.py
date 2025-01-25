@@ -5,7 +5,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.model_selection import RandomizedSearchCV, cross_validate
 from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, make_scorer
 
-def Classifier_Optimizer(model_dict, X_train, y_train, scoring=None, n_iter=100, cv=5, random_state=42, n_jobs=-1):
+def ClassifierOptimizer(model_dict, X_train, y_train, scoring='f1', n_iter=100, cv=5, random_state=42, n_jobs=-1):
     """
     Perform hyperparameter optimization for multiple classification models using RandomizedSearchCV.
 
@@ -52,14 +52,17 @@ def Classifier_Optimizer(model_dict, X_train, y_train, scoring=None, n_iter=100,
     }
 
     # Default metrics if not provided
-    if scoring is None:
-        scoring = {
-            "accuracy": "accuracy",
-            "precision": make_scorer(precision_score, zero_division=0, average='weighted'),
-            "recall": make_scorer(recall_score, average='weighted'),
-            "f1": make_scorer(f1_score, average='weighted'),
-        }
+    scoring_metrics = {
+        "accuracy": "accuracy",
+        "precision": make_scorer(precision_score, zero_division=0, average='weighted'),
+        "recall": make_scorer(recall_score, average='weighted'),
+        "f1": make_scorer(f1_score, average='weighted'),
+    }
 
+    # Validate scoring
+    if scoring not in scoring_metrics:
+        raise ValueError(f"Invalid scoring metric '{scoring}'. Choose from {list(scoring_metrics.keys())}.")
+    
     # Validate model_dict
     if not isinstance(model_dict, dict):
         raise ValueError("model_dict must be a dictionary.")
@@ -97,7 +100,7 @@ def Classifier_Optimizer(model_dict, X_train, y_train, scoring=None, n_iter=100,
         search = RandomizedSearchCV(
             estimator=model, 
             param_distributions=param_dist[name], 
-            scoring=make_scorer(f1_score, average='weighted'), 
+            scoring=scoring_metrics[scoring], 
             n_iter=n_iter, 
             cv=cv, 
             random_state=random_state,
@@ -116,7 +119,7 @@ def Classifier_Optimizer(model_dict, X_train, y_train, scoring=None, n_iter=100,
             X_train, 
             y_train, 
             cv=cv, 
-            scoring=scoring, 
+            scoring=scoring_metrics, 
             return_train_score=True,
             error_score='raise'
         )

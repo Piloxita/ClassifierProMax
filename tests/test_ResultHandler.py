@@ -3,7 +3,7 @@ import pandas as pd
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
-from classifierpromax.Result_Handler import Result_Handler
+from classifierpromax.ResultHandler import ResultHandler
 
 def test_result_handler_with_hyperparameters():
     models = {
@@ -18,8 +18,8 @@ def test_result_handler_with_hyperparameters():
         'random_forest': {'accuracy': 0.89, 'precision': 0.87, 'recall': 0.88, 'f1': 0.87}
     }
 
-    # Get the result from the Result_Handler
-    result_df = Result_Handler(scoring_dict, models)
+    # Get the result from the ResultHandler
+    result_df = ResultHandler(scoring_dict, models)
 
     # Check if expected index names are present in the result DataFrame
     expected_index = ['accuracy', 'precision', 'recall', 'f1', 'logreg__C']
@@ -36,7 +36,7 @@ def test_empty_scoring_dict_with_hyperparameters():
 
     expected_df = pd.DataFrame(columns=[], index=['accuracy', 'precision', 'recall', 'f1'])
 
-    result_df = Result_Handler(scoring_dict, models={})
+    result_df = ResultHandler(scoring_dict, models={})
 
     # Check if the expected index names are present in the result DataFrame (even if empty)
     expected_index = ['accuracy', 'precision', 'recall', 'f1']

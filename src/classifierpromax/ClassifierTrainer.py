@@ -13,7 +13,7 @@ from sklearn.model_selection import cross_validate
 # Metrics and Scoring
 from sklearn.metrics import make_scorer, precision_score, recall_score, f1_score
 
-def Classifier_Trainer(preprocessor, X_train, y_train, pos_label, seed, cv=5, metrics=None):
+def ClassifierTrainer(preprocessor, X_train, y_train, seed, cv=5, metrics=None):
     """
     Train multiple machine learning classifiers using cross-validation and return trained models
     and evaluation metrics.
@@ -70,20 +70,13 @@ def Classifier_Trainer(preprocessor, X_train, y_train, pos_label, seed, cv=5, me
             f"and y_train ({y_train.shape[0]}). They must be the same."
         )
 
-    # Validate positive label
-    if pos_label not in y_train:
-        raise ValueError(
-            f"The specified positive label '{pos_label}' is not found in y_train. "
-            f"Ensure that the label is present in the dataset."
-        )
-
     # Default metrics if not provided
     if metrics is None:
         metrics = {
             "accuracy": "accuracy",
-            "precision": make_scorer(precision_score, pos_label=pos_label, zero_division=0, average='weighted'),
-            "recall": make_scorer(recall_score, pos_label=pos_label, average='weighted'),
-            "f1": make_scorer(f1_score, pos_label=pos_label, average='weighted'),
+            "precision": make_scorer(precision_score, zero_division=0, average='weighted'),
+            "recall": make_scorer(recall_score, average='weighted'),
+            "f1": make_scorer(f1_score, average='weighted'),
         }
 
     # Define classifiers

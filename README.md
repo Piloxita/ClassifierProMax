@@ -61,7 +61,7 @@ opt_models, opt_score = ClassifierOptimizer(fs_models, X, y, scoring="f1")
 ```
 4. Results summary
 ```python
-from classifierpromax.ResultsHandler import ResultsHandler
+from classifierpromax.ResultHandler import ResultHandler
 
 # Function will score the models and return a summary table
 summary = ResultHandler(score, opt_models)

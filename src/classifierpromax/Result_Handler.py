@@ -1,25 +1,27 @@
 import pandas as pd
 
-def Result_Handler(scoring_dict, models=None):
-    if not scoring_dict:
-        return pd.DataFrame(columns=[], index=['accuracy', 'precision', 'recall', 'f1'])
+def Result_Handler(scoring_dict_trainer, scoring_dict_optimizer):
+    """
+    Combine results from baseline model training and optimized model tuning into a single DataFrame.
+    Exclude index from the optimized models.
+    """
 
+    df1 = pd.concat(scoring_dict_trainer.values(), axis='columns').reset_index()
+    
 
-    index = ['accuracy', 'precision', 'recall', 'f1'] 
-    data = {model: list(scores.values()) for model, scores in scoring_dict.items()}
+    df2 = pd.concat(scoring_dict_optimizer.values(), axis='columns').reset_index()
+    
 
- 
-    if models:
-        for model_name, model in models.items():
-            for param, value in model.get_params().items():    
-                data.setdefault(model_name, []).append(value)
-                index.append(f"{model_name}__{param}")
+    df2.drop(columns=["index"], inplace=True)
+    
 
-    num_rows = len(index)
-    for model in data:
-        if len(data[model]) != num_rows:
+    combined_df = pd.concat([df1, df2], axis=1)
+  
+    combined_df.columns = pd.MultiIndex.from_tuples(
+        [(col.split('_')[0], col.split('_')[1]) if len(col.split('_')) > 1 else ('', col) for col in combined_df.columns]
+    )
+    
+    return combined_df
 
-            data[model].extend([None] * (num_rows - len(data[model])))
+result_df = Result_Handler(scoring_dict_trainer, scoring_dict_optimizer)
 
-
-    return pd.DataFrame(data, index=index)

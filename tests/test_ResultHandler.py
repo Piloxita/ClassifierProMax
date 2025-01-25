@@ -1,51 +1,71 @@
 import pytest
 import pandas as pd
-from sklearn.linear_model import LogisticRegression
-from sklearn.svm import SVC
-from sklearn.ensemble import RandomForestClassifier
 from classifierpromax.ResultHandler import ResultHandler
 
-@pytest.fixture
-def scoring_dict_trainer():
-    # Sample input data for scoring_dict_trainer
-    data = {
-        'model1': pd.DataFrame({'metric1': [0.9, 0.8], 'metric2': [0.85, 0.75]}),
-        'model2': pd.DataFrame({'metric1': [0.95, 0.92], 'metric2': [0.88, 0.80]})
+def test_result_handler_valid_input():
+    # Test with valid input
+    scoring_dict_trainer = {
+        "model1": pd.DataFrame({"mean": [0.85], "std": [0.03]}),
+        "model2": pd.DataFrame({"mean": [0.80], "std": [0.04]})
     }
-    return data
-
-@pytest.fixture
-def scoring_dict_optimizer():
-    # Sample input data for scoring_dict_optimizer
-    data = {
-        'model1': pd.DataFrame({'metric1': [0.91, 0.82], 'metric2': [0.86, 0.76]}),
-        'model2': pd.DataFrame({'metric1': [0.96, 0.93], 'metric2': [0.89, 0.81]})
+    scoring_dict_optimizer = {
+        "model1": pd.DataFrame({"mean": [0.88], "std": [0.02]}),
+        "model2": pd.DataFrame({"mean": [0.83], "std": [0.03]})
     }
-    return data
 
-def test_result_handler(scoring_dict_trainer, scoring_dict_optimizer):
-    # Call the ResultHandler function
-    result_df = ResultHandler(scoring_dict_trainer, scoring_dict_optimizer)
-    
-    # Verify the combined DataFrame structure
-    assert isinstance(result_df, pd.DataFrame), "The result is not a DataFrame."
-    
-    # Verify the number of rows in the DataFrame
-    assert result_df.shape[0] == 2, f"Expected 2 rows, but got {result_df.shape[0]}."
-    
-    # Verify the number of columns in the DataFrame
-    expected_columns = pd.MultiIndex.from_tuples([
-        ('model1', 'metric1'), ('model1', 'metric2'),
-        ('model2', 'metric1'), ('model2', 'metric2')
-    ])
-    assert result_df.columns.equals(expected_columns), "The column structure is incorrect."
-    
-    # Check if index from optimizer is removed
-    assert "index" not in result_df.columns.get_level_values(1), "The 'index' column should not be present."
+    # Case with std=False
+    result = ResultHandler(scoring_dict_trainer, scoring_dict_optimizer, std=False)
+    assert isinstance(result, pd.DataFrame)
+    assert "model1_baseline" in result.columns
+    assert "model1_optimized" in result.columns
+    assert result.loc[:, "model1_baseline"].iloc[0] == 0.85
 
-    # Validate the values in the combined DataFrame
-    expected_values = [
-        [0.9, 0.85, 0.91, 0.86],
-        [0.8, 0.75, 0.82, 0.76]
-    ]
-    pd.testing.assert_frame_equal(result_df.values, expected_values, check_dtype=False)
+    # Case with std=True
+    result = ResultHandler(scoring_dict_trainer, scoring_dict_optimizer, std=True)
+    assert isinstance(result, pd.DataFrame)
+    assert ("mean" in result.columns.get_level_values(1))
+    assert ("std" in result.columns.get_level_values(1))
+
+def test_result_handler_without_optimizer():
+    # Test without scoring_dict_optimizer
+    scoring_dict_trainer = {
+        "model1": pd.DataFrame({"mean": [0.85], "std": [0.03]}),
+        "model2": pd.DataFrame({"mean": [0.80], "std": [0.04]})
+    }
+
+    # Call ResultHandler without scoring_dict_optimizer
+    result = ResultHandler(scoring_dict_trainer)
+
+    # Assertions
+    assert isinstance(result, pd.DataFrame)
+    assert "model1" in result.columns
+    assert "model2" in result.columns
+
+def test_result_handler_invalid_trainer_input():
+    # Test with invalid scoring_dict_trainer
+    with pytest.raises(ValueError, match="scoring_dict_trainer must be a dictionary"):
+        ResultHandler(scoring_dict_trainer="invalid_input")
+
+def test_result_handler_invalid_optimizer_input():
+    # Test with invalid scoring_dict_optimizer
+    scoring_dict_trainer = {
+        "model1": pd.DataFrame({"mean": [0.85], "std": [0.03]})
+    }
+    with pytest.raises(ValueError, match="scoring_dict_optimizer must be a dictionary"):
+        ResultHandler(scoring_dict_trainer, scoring_dict_optimizer="invalid_input")
+
+def test_result_handler_invalid_dataframe():
+    # Test with invalid DataFrame in dictionaries
+    scoring_dict_trainer = {
+        "model1": "invalid_df"
+    }
+    with pytest.raises(ValueError, match="Value for key 'model1' in scoring_dict_trainer must be a pandas DataFrame"):
+        ResultHandler(scoring_dict_trainer)
+
+def test_result_handler_invalid_std_input():
+    # Test with invalid std value
+    scoring_dict_trainer = {
+        "model1": pd.DataFrame({"mean": [0.85], "std": [0.03]})
+    }
+    with pytest.raises(ValueError, match="std must be a boolean value"):
+        ResultHandler(scoring_dict_trainer, std="invalid")

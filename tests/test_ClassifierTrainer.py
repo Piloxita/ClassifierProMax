@@ -49,11 +49,10 @@ def preprocessor():
 
 def test_valid_input(sample_data, preprocessor):
     X, y = sample_data
-    pos_label = 1
     seed = 42
 
     trained_model_dict, scoring_dict = ClassifierTrainer(
-        preprocessor, X, y, pos_label, seed
+        preprocessor, X, y, seed
     )
 
     assert isinstance(trained_model_dict, dict)
@@ -63,34 +62,31 @@ def test_valid_input(sample_data, preprocessor):
 
 def test_invalid_preprocessor(sample_data):
     X, y = sample_data
-    pos_label = 1
     seed = 42
     invalid_preprocessor = "not_a_pipeline"
 
     with pytest.raises(TypeError):
-        ClassifierTrainer(invalid_preprocessor, X, y, pos_label, seed)
+        ClassifierTrainer(invalid_preprocessor, X, y, seed)
 
 def test_mismatched_shapes(preprocessor):
     X = np.random.rand(100, 10)
     y = np.random.randint(0, 2, size=90)  # Mismatched length
-    pos_label = 1
     seed = 42
 
     with pytest.raises(ValueError):
-        ClassifierTrainer(preprocessor, X, y, pos_label, seed)
+        ClassifierTrainer(preprocessor, X, y, seed)
 
 def test_custom_metrics(sample_data, preprocessor):
     X, y = sample_data
-    pos_label = 1
     seed = 42
 
     custom_metrics = {
-        "precision": make_scorer(precision_score, pos_label=pos_label, zero_division=0),
-        "recall": make_scorer(recall_score, pos_label=pos_label),
-        "f1": make_scorer(f1_score, pos_label=pos_label),
+        "precision": make_scorer(precision_score, zero_division=0, average='weighted'),
+        "recall": make_scorer(recall_score, average='weighted'),
+        "f1": make_scorer(f1_score, average='weighted'),
     }
 
-    _, scoring_dict = ClassifierTrainer(preprocessor, X, y, pos_label, seed, metrics=custom_metrics)
+    _, scoring_dict = ClassifierTrainer(preprocessor, X, y, seed, metrics=custom_metrics)
 
     for model_name, scores in scoring_dict.items():
         assert "test_precision" in scores.index

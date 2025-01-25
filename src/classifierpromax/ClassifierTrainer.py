@@ -22,10 +22,10 @@ def ClassifierTrainer(preprocessor, X_train, y_train, seed, cv=5, metrics=None):
     using cross-validation, and evaluates their performance based on specified or default metrics.
     It supports handling common validation checks and provides a structured summary of model scores.
 
-    Parameters:
+    Parameters: 
     -----------
     preprocessor : sklearn.pipeline.Pipeline or transformer
-        A preprocessing pipeline or transformer object with `fit` and `transform` methods. 
+        A preprocessing pipeline or transformer object with `fit` and `transform` methods.
         Used to preprocess the training data.
 
     X_train : array-like of shape (n_samples, n_features)
@@ -58,67 +58,61 @@ def ClassifierTrainer(preprocessor, X_train, y_train, seed, cv=5, metrics=None):
         A dictionary containing evaluation metrics for each model. Keys are model names, and values
         are pandas DataFrames summarizing the mean and standard deviation of each metric across
         cross-validation folds.
-        
+
     Examples:
     ---------
-    ```python
-    import pandas as pd
-    from sklearn.pipeline import Pipeline
-    from sklearn.preprocessing import StandardScaler, OneHotEncoder
-    from sklearn.compose import ColumnTransformer
-    from sklearn.model_selection import train_test_split
-
-    # Sample data
-    # Assume df is your DataFrame and 'target' is the column to predict
-    df = pd.read_csv('your_data.csv')
-    X = df.drop('target', axis=1)
-    y = df['target']
-
-    # Split the data into training and testing sets
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-    # Define numerical and categorical columns
-    numerical_features = X.select_dtypes(include=['int64', 'float64']).columns
-    categorical_features = X.select_dtypes(include=['object', 'category']).columns
-
-    # Preprocessing pipelines
-    numeric_transformer = Pipeline(steps=[
-        ('scaler', StandardScaler())
-    ])
-
-    categorical_transformer = Pipeline(steps=[
-        ('onehot', OneHotEncoder(handle_unknown='ignore'))
-    ])
-
-    preprocessor = ColumnTransformer(
-        transformers=[
-            ('num', numeric_transformer, numerical_features),
-            ('cat', categorical_transformer, categorical_features)
-        ]
-    )
-
-    # Train the classifiers
-    seed = 42
-    trained_models, metrics = ClassifierTrainer(preprocessor, X_train, y_train, seed)
-
-    # Display metrics
-    for model_name, metric_df in metrics.items():
-        print(f"Model: {model_name}")
-        print(metric_df)
-        print("\n")
-    ```
-    # Example Output:
-    # Model: dummy
-    #              accuracy     precision       recall         f1
-    # mean      0.500000      0.500000      0.500000      0.500000
-    # std       0.000000      0.000000      0.000000      0.000000
-    #
-    # Model: logreg
-    #              accuracy     precision       recall         f1
-    # mean      0.850000      0.852000      0.845000      0.848000
-    # std       0.020000      0.015000      0.018000      0.016000
-    #
-    # ... (additional model metrics)
+    >>> import pandas as pd
+    >>> from sklearn.pipeline import Pipeline
+    >>> from sklearn.preprocessing import StandardScaler, OneHotEncoder
+    >>> from sklearn.compose import ColumnTransformer
+    >>> from sklearn.model_selection import train_test_split
+    >>>
+    >>> # Sample data
+    >>> # Assume df is your DataFrame and 'target' is the column to predict
+    >>> df = pd.read_csv('your_data.csv')
+    >>> X = df.drop('target', axis=1)
+    >>> y = df['target']
+    >>>
+    >>> # Split the data into training and testing sets
+    >>> X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    >>>
+    >>> # Define numerical and categorical columns
+    >>> numerical_features = X.select_dtypes(include=['int64', 'float64']).columns
+    >>> categorical_features = X.select_dtypes(include=['object', 'category']).columns
+    >>>
+    >>> # Preprocessing pipelines
+    >>> numeric_transformer = Pipeline(steps=[('scaler', StandardScaler())])
+    >>>
+    >>> categorical_transformer = Pipeline(steps=[('onehot', OneHotEncoder(handle_unknown='ignore'))])
+    >>>
+    >>> preprocessor = ColumnTransformer(
+    >>>     transformers=[
+    >>>         ('num', numeric_transformer, numerical_features),
+    >>>         ('cat', categorical_transformer, categorical_features)
+    >>>     ]
+    >>> )
+    >>>
+    >>> # Train the classifiers
+    >>> seed = 42
+    >>> trained_models, metrics = ClassifierTrainer(preprocessor, X_train, y_train, seed)
+    >>>
+    >>> # Display metrics
+    >>> for model_name, metric_df in metrics.items():
+    >>>     print(f"Model: {model_name}")
+    >>>     print(metric_df)
+    >>>     print("\\n")
+    >>> # Example Output:
+    >>> # Model: dummy
+    >>> #              accuracy     precision       recall         f1
+    >>> # mean      0.500000      0.500000      0.500000      0.500000
+    >>> # std       0.000000      0.000000      0.000000      0.000000
+    >>> #
+    >>> # Model: logreg
+    >>> #              accuracy     precision       recall         f1
+    >>> # mean      0.850000      0.852000      0.845000      0.848000
+    >>> # std       0.020000      0.015000      0.018000      0.016000
+    >>> #
+    >>> # ... (additional model metrics)
     """
     # Validate preprocessor
     if not all(hasattr(preprocessor, method) for method in ["fit", "transform"]):

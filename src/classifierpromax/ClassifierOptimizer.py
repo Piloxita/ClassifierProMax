@@ -33,12 +33,7 @@ def ClassifierOptimizer(model_dict, X_train, y_train, scoring='f1', n_iter=100, 
         Random seed for reproducibility of RandomizedSearchCV. Default is 42.
     n_jobs : int, optional
         The number of jobs to run in parallel for RandomizedSearchCV. Default is -1 (use all available processors).
-    Returns : --------
-    optimized_model_dict : dict
-        A dictionary containing the best estimators for each classifier after hyperparameter optimization.
-    scoring_dict : dict
-        A dictionary containing cross-validation results for each optimized model, with metrics aggregated by mean and standard deviation.
-    
+
     Returns:
     --------
     optimized_model_dict : dict

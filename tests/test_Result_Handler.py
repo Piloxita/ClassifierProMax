@@ -3,46 +3,49 @@ import pandas as pd
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
-from classifierpromax.Result_Handler import Result_Handler
+from classifierpromax.Result_Handler import Result_Handler  # replace with the actual module name
 
-def test_result_handler_with_hyperparameters():
-    models = {
-        "logreg": LogisticRegression(random_state=42),
-        "svc": SVC(random_state=42),
-        "random_forest": RandomForestClassifier(random_state=42)
+@pytest.fixture
+def scoring_dict_trainer():
+    # Sample input data for scoring_dict_trainer
+    data = {
+        'model1': pd.DataFrame({'metric1': [0.9, 0.8], 'metric2': [0.85, 0.75]}),
+        'model2': pd.DataFrame({'metric1': [0.95, 0.92], 'metric2': [0.88, 0.80]})
     }
+    return data
 
-    scoring_dict = {
-        'logreg': {'accuracy': 0.85, 'precision': 0.82, 'recall': 0.84, 'f1': 0.83},
-        'svc': {'accuracy': 0.87, 'precision': 0.86, 'recall': 0.88, 'f1': 0.87},
-        'random_forest': {'accuracy': 0.89, 'precision': 0.87, 'recall': 0.88, 'f1': 0.87}
+@pytest.fixture
+def scoring_dict_optimizer():
+    # Sample input data for scoring_dict_optimizer
+    data = {
+        'model1': pd.DataFrame({'metric1': [0.91, 0.82], 'metric2': [0.86, 0.76]}),
+        'model2': pd.DataFrame({'metric1': [0.96, 0.93], 'metric2': [0.89, 0.81]})
     }
+    return data
 
-    # Get the result from the Result_Handler
-    result_df = Result_Handler(scoring_dict, models)
+def test_result_handler(scoring_dict_trainer, scoring_dict_optimizer):
+    # Call the Result_Handler function
+    result_df = Result_Handler(scoring_dict_trainer, scoring_dict_optimizer)
+    
+    # Verify the combined DataFrame structure
+    assert isinstance(result_df, pd.DataFrame), "The result is not a DataFrame."
+    
+    # Verify the number of rows in the DataFrame
+    assert result_df.shape[0] == 2, f"Expected 2 rows, but got {result_df.shape[0]}."
+    
+    # Verify the number of columns in the DataFrame
+    expected_columns = pd.MultiIndex.from_tuples([
+        ('model1', 'metric1'), ('model1', 'metric2'),
+        ('model2', 'metric1'), ('model2', 'metric2')
+    ])
+    assert result_df.columns.equals(expected_columns), "The column structure is incorrect."
+    
+    # Check if index from optimizer is removed
+    assert "index" not in result_df.columns.get_level_values(1), "The 'index' column should not be present."
 
-    # Check if expected index names are present in the result DataFrame
-    expected_index = ['accuracy', 'precision', 'recall', 'f1', 'logreg__C']
-    for idx in expected_index:
-        assert idx in result_df.index, f"Index '{idx}' not found in the result DataFrame."
-
-    # Check if the expected columns are present in the result DataFrame
-    expected_columns = ['logreg', 'svc', 'random_forest']
-    for col in expected_columns:
-        assert col in result_df.columns, f"Column '{col}' not found in the result DataFrame."
-
-def test_empty_scoring_dict_with_hyperparameters():
-    scoring_dict = {}
-
-    expected_df = pd.DataFrame(columns=[], index=['accuracy', 'precision', 'recall', 'f1'])
-
-    result_df = Result_Handler(scoring_dict, models={})
-
-    # Check if the expected index names are present in the result DataFrame (even if empty)
-    expected_index = ['accuracy', 'precision', 'recall', 'f1']
-    for idx in expected_index:
-        assert idx in result_df.index, f"Index '{idx}' not found in the result DataFrame."
-
-    # Check that there are no columns since scoring_dict is empty
-    assert result_df.columns.empty, "Expected no columns in the result DataFrame."
-
+    # Validate the values in the combined DataFrame
+    expected_values = [
+        [0.9, 0.85, 0.91, 0.86],
+        [0.8, 0.75, 0.82, 0.76]
+    ]
+    pd.testing.assert_frame_equal(result_df.values, expected_values, check_dtype=False)

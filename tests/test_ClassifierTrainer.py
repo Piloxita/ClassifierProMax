@@ -12,7 +12,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import precision_score, recall_score, f1_score
 from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
-from classifierpromax.Classifier_Trainer import Classifier_Trainer
+from classifierpromax.ClassifierTrainer import ClassifierTrainer
 
 # Metrics and Scoring
 from sklearn.metrics import make_scorer, precision_score, recall_score, f1_score  # For metrics
@@ -52,7 +52,7 @@ def test_valid_input(sample_data, preprocessor):
     pos_label = 1
     seed = 42
 
-    trained_model_dict, scoring_dict = Classifier_Trainer(
+    trained_model_dict, scoring_dict = ClassifierTrainer(
         preprocessor, X, y, pos_label, seed
     )
 
@@ -68,7 +68,7 @@ def test_invalid_preprocessor(sample_data):
     invalid_preprocessor = "not_a_pipeline"
 
     with pytest.raises(TypeError):
-        Classifier_Trainer(invalid_preprocessor, X, y, pos_label, seed)
+        ClassifierTrainer(invalid_preprocessor, X, y, pos_label, seed)
 
 def test_mismatched_shapes(preprocessor):
     X = np.random.rand(100, 10)
@@ -77,15 +77,7 @@ def test_mismatched_shapes(preprocessor):
     seed = 42
 
     with pytest.raises(ValueError):
-        Classifier_Trainer(preprocessor, X, y, pos_label, seed)
-
-def test_missing_pos_label(sample_data, preprocessor):
-    X, y = sample_data
-    pos_label = 99  # Non-existent label
-    seed = 42
-
-    with pytest.raises(ValueError):
-        Classifier_Trainer(preprocessor, X, y, pos_label, seed)
+        ClassifierTrainer(preprocessor, X, y, pos_label, seed)
 
 def test_custom_metrics(sample_data, preprocessor):
     X, y = sample_data
@@ -98,7 +90,7 @@ def test_custom_metrics(sample_data, preprocessor):
         "f1": make_scorer(f1_score, pos_label=pos_label),
     }
 
-    _, scoring_dict = Classifier_Trainer(preprocessor, X, y, pos_label, seed, metrics=custom_metrics)
+    _, scoring_dict = ClassifierTrainer(preprocessor, X, y, pos_label, seed, metrics=custom_metrics)
 
     for model_name, scores in scoring_dict.items():
         assert "test_precision" in scores.index

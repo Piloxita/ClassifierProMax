@@ -1,6 +1,6 @@
 import pandas as pd
 
-def Result_Handler(scoring_dict, models=None):
+def ResultHandler(scoring_dict, models=None):
     if not scoring_dict:
         return pd.DataFrame(columns=[], index=['accuracy', 'precision', 'recall', 'f1'])
 

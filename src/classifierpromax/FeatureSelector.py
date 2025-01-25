@@ -1,7 +1,7 @@
 from sklearn.pipeline import make_pipeline
 from sklearn.feature_selection import RFE, SelectKBest, f_classif
 
-def Feature_Selector(preprocessor, trained_models, X_train, y_train, method='RFE', n_features_to_select=None):
+def FeatureSelector(preprocessor, trained_models, X_train, y_train, method='RFE', n_features_to_select=None):
     """
     Selects features for multiple classification models using RFE or Pearson methods.
 
@@ -49,7 +49,7 @@ def Feature_Selector(preprocessor, trained_models, X_train, y_train, method='RFE
     ...     'RandomForest': make_pipeline(StandardScaler(), RandomForestClassifier())
     ... }
     >>> preprocessor = StandardScaler()
-    >>> feature_selected_models = Feature_Selector(
+    >>> feature_selected_models = FeatureSelector(
     ...     preprocessor, trained_models, X_train, y_train, method='RFE', n_features_to_select=5
     ... )
     >>> print(feature_selected_models.keys())

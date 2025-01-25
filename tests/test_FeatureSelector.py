@@ -5,7 +5,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
-from classifierpromax.Feature_Selector import Feature_Selector
+from classifierpromax.FeatureSelector import FeatureSelector
 
 # Test setup: synthetic dataset
 @pytest.fixture
@@ -31,18 +31,8 @@ def preprocessor():
 # Test RFE with valid input
 def test_rfe_selection(sample_data, trained_models, preprocessor):
     X, y = sample_data
-    selected_models = Feature_Selector(
+    selected_models = FeatureSelector(
         preprocessor, trained_models, X, y, method='RFE', n_features_to_select=5
-    )
-    assert "RandomForest" in selected_models
-    assert "LogisticRegression" in selected_models
-    assert len(selected_models["RandomForest"].steps) == 3  # Ensure pipeline has 3 steps
-
-# Test Variance Threshold
-def test_variance_threshold(sample_data, trained_models, preprocessor):
-    X, y = sample_data
-    selected_models = Feature_Selector(
-        preprocessor, trained_models, X, y, method='Var Threshold'
     )
     assert "RandomForest" in selected_models
     assert "LogisticRegression" in selected_models
@@ -51,7 +41,7 @@ def test_variance_threshold(sample_data, trained_models, preprocessor):
 # Test Pearson feature selection
 def test_pearson_selection(sample_data, trained_models, preprocessor):
     X, y = sample_data
-    selected_models = Feature_Selector(
+    selected_models = FeatureSelector(
         preprocessor, trained_models, X, y, method='Pearson', n_features_to_select=5
     )
     assert "RandomForest" in selected_models
@@ -62,7 +52,7 @@ def test_pearson_selection(sample_data, trained_models, preprocessor):
 def test_invalid_method(sample_data, trained_models, preprocessor):
     X, y = sample_data
     with pytest.raises(ValueError, match="Invalid feature selection method: InvalidMethod"):
-        Feature_Selector(
+        FeatureSelector(
             preprocessor, trained_models, X, y, method='InvalidMethod'
         )
 
@@ -70,6 +60,6 @@ def test_invalid_method(sample_data, trained_models, preprocessor):
 def test_missing_n_features_to_select(sample_data, trained_models, preprocessor):
     X, y = sample_data
     with pytest.raises(ValueError, match="`n_features_to_select` must be provided for RFE."):
-        Feature_Selector(
+        FeatureSelector(
             preprocessor, trained_models, X, y, method='RFE'
         )

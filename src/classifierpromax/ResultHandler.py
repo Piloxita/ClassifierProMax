@@ -1,6 +1,6 @@
 import pandas as pd
 
-def Result_Handler(scoring_dict_trainer, scoring_dict_optimizer):
+def ResultHandler(scoring_dict_trainer, scoring_dict_optimizer):
     """
     Combine results from baseline model training and optimized model tuning into a single DataFrame.
     Exclude index from the optimized models.
@@ -22,6 +22,4 @@ def Result_Handler(scoring_dict_trainer, scoring_dict_optimizer):
     )
     
     return combined_df
-
-result_df = Result_Handler(scoring_dict_trainer, scoring_dict_optimizer)
 

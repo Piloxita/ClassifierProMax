@@ -3,7 +3,7 @@ import pandas as pd
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
-from classifierpromax.Result_Handler import Result_Handler  # replace with the actual module name
+from classifierpromax.ResultHandler import ResultHandler
 
 @pytest.fixture
 def scoring_dict_trainer():
@@ -24,8 +24,8 @@ def scoring_dict_optimizer():
     return data
 
 def test_result_handler(scoring_dict_trainer, scoring_dict_optimizer):
-    # Call the Result_Handler function
-    result_df = Result_Handler(scoring_dict_trainer, scoring_dict_optimizer)
+    # Call the ResultHandler function
+    result_df = ResultHandler(scoring_dict_trainer, scoring_dict_optimizer)
     
     # Verify the combined DataFrame structure
     assert isinstance(result_df, pd.DataFrame), "The result is not a DataFrame."

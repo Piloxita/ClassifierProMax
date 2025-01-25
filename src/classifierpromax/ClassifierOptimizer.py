@@ -8,19 +8,16 @@ from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_sc
 def ClassifierOptimizer(model_dict, X_train, y_train, scoring='f1', n_iter=100, cv=5, random_state=42, n_jobs=-1):
     """
     Optimizes a dictionary of scikit-learn Pipeline classifiers using RandomizedSearchCV and evaluates their performance.
-
-    Parameters
-    ----------
+    
+    Parameters: 
+    -----------
     model_dict : dict
         A dictionary where keys are model names (str) and values are scikit-learn Pipeline objects.
         Each pipeline must contain a classifier whose hyperparameters are defined in `param_dist`.
-
     X_train : pandas.DataFrame or numpy.ndarray
         The feature matrix for training the classifiers. Must have the same number of samples as `y_train`.
-
     y_train : pandas.Series or numpy.ndarray
         The target labels for training the classifiers. Must have the same number of samples as `X_train`.
-
     scoring : dict, optional
         A dictionary specifying scoring metrics to evaluate the classifiers during cross-validation. 
         Default is None, which uses the following metrics:
@@ -28,29 +25,30 @@ def ClassifierOptimizer(model_dict, X_train, y_train, scoring='f1', n_iter=100, 
             - "precision" (weighted)
             - "recall" (weighted)
             - "f1" (weighted)
-
     n_iter : int, optional
         The number of parameter settings sampled for RandomizedSearchCV. Default is 100.
-
     cv : int, optional
         The number of cross-validation folds for both RandomizedSearchCV and cross_validate. Default is 5.
-
     random_state : int, optional
         Random seed for reproducibility of RandomizedSearchCV. Default is 42.
-
     n_jobs : int, optional
         The number of jobs to run in parallel for RandomizedSearchCV. Default is -1 (use all available processors).
-
-    Returns
-    -------
+    Returns : --------
+    optimized_model_dict : dict
+        A dictionary containing the best estimators for each classifier after hyperparameter optimization.
+    scoring_dict : dict
+        A dictionary containing cross-validation results for each optimized model, with metrics aggregated by mean and standard deviation.
+    
+    Returns:
+    --------
     optimized_model_dict : dict
         A dictionary containing the best estimators for each classifier after hyperparameter optimization.
 
     scoring_dict : dict
         A dictionary containing cross-validation results for each optimized model, with metrics aggregated by mean and standard deviation.
 
-    Examples
-    --------
+    Examples: 
+    ---------
     >>> from sklearn.pipeline import Pipeline
     >>> from sklearn.linear_model import LogisticRegression
     >>> from sklearn.svm import SVC
@@ -83,7 +81,7 @@ def ClassifierOptimizer(model_dict, X_train, y_train, scoring='f1', n_iter=100, 
             'svc__class_weight': [None, 'balanced']
         },
         'random_forest' : {
-            'randomforestclassifier__n_estimators': randint(10,50),
+            'randomforestclassifier__n_estimators': randint(10,30),
             'randomforestclassifier__max_depth': randint(5,10)
         }
     }

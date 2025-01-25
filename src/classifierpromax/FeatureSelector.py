@@ -5,8 +5,8 @@ def FeatureSelector(preprocessor, trained_models, X_train, y_train, method='RFE'
     """
     Selects features for multiple classification models using RFE or Pearson methods.
 
-    Parameters
-    ----------
+    Parameters:
+    -----------
     preprocessor : sklearn.pipeline.Pipeline or Transformer
         Preprocessing pipeline to include in the final pipeline.
 
@@ -28,19 +28,19 @@ def FeatureSelector(preprocessor, trained_models, X_train, y_train, method='RFE'
         The number of features to select. 
         Required for both 'RFE' and 'Pearson' methods. Defaults to None.
 
-    Returns
-    -------
+    Returns:
+    --------
     feature_selected_models : dict
         A dictionary containing the feature-selected models. 
         Keys are model names, and values are pipelines with feature selection applied.
 
-    Raises
-    ------
+    Raises:
+    -------
     ValueError
         If `n_features_to_select` is not provided or an invalid method is specified.
 
-    Examples
-    --------
+    Examples:
+    ---------
     >>> from sklearn.ensemble import RandomForestClassifier
     >>> from sklearn.preprocessing import StandardScaler
     >>> from sklearn.datasets import make_classification

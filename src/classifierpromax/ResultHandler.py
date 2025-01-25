@@ -39,8 +39,6 @@ def ResultHandler(scoring_dict_trainer, scoring_dict_optimizer=None, std=False):
     >>>     "model2": pd.DataFrame({"mean": [0.83], "std": [0.03]})
     >>> }
     >>> ResultHandler(scoring_dict_trainer, scoring_dict_optimizer, std=False)
-                  model1_baseline  model2_baseline  model1_optimized  model2_optimized
-    mean               0.85              0.80             0.88              0.83
     """
     import pandas as pd
 

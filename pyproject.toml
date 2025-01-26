@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "classifierpromax"
 version = "0.1.0"
-description = "Help you train and optimize many popuplar classifiers in one place with a nice result table"
+description = "Help you train and optimize many popular classifiers in one place with a nice result table"
 authors = ["Long Nguyen, Jenson Chang, Gunisha Kaur, Han Wang"]
 license = "MIT"
 readme = "README.md"

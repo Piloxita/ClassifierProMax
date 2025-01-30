@@ -2,8 +2,12 @@ import pytest
 import pandas as pd
 from classifierpromax.ResultHandler import ResultHandler
 
+# ---------------------
+# Test Cases
+# ---------------------
+
 def test_result_handler_valid_input():
-    # Test with valid input
+    """Ensure ResultHandler correctly processes valid input with and without std."""
     scoring_dict_trainer = {
         "model1": pd.DataFrame({"mean": [0.85], "std": [0.03]}),
         "model2": pd.DataFrame({"mean": [0.80], "std": [0.04]})
@@ -27,27 +31,25 @@ def test_result_handler_valid_input():
     assert ("std" in result.columns.get_level_values(1))
 
 def test_result_handler_without_optimizer():
-    # Test without scoring_dict_optimizer
+    """Ensure ResultHandler works when no optimizer results are provided."""
     scoring_dict_trainer = {
         "model1": pd.DataFrame({"mean": [0.85], "std": [0.03]}),
         "model2": pd.DataFrame({"mean": [0.80], "std": [0.04]})
     }
 
-    # Call ResultHandler without scoring_dict_optimizer
     result = ResultHandler(scoring_dict_trainer)
 
-    # Assertions
     assert isinstance(result, pd.DataFrame)
     assert "model1" in result.columns
     assert "model2" in result.columns
 
 def test_result_handler_invalid_trainer_input():
-    # Test with invalid scoring_dict_trainer
+    """Ensure ValueError is raised when scoring_dict_trainer is not a dictionary."""
     with pytest.raises(ValueError, match="scoring_dict_trainer must be a dictionary"):
         ResultHandler(scoring_dict_trainer="invalid_input")
 
 def test_result_handler_invalid_optimizer_input():
-    # Test with invalid scoring_dict_optimizer
+    """Ensure ValueError is raised when scoring_dict_optimizer is not a dictionary."""
     scoring_dict_trainer = {
         "model1": pd.DataFrame({"mean": [0.85], "std": [0.03]})
     }
@@ -55,7 +57,7 @@ def test_result_handler_invalid_optimizer_input():
         ResultHandler(scoring_dict_trainer, scoring_dict_optimizer="invalid_input")
 
 def test_result_handler_invalid_dataframe():
-    # Test with invalid DataFrame in dictionaries
+    """Ensure ValueError is raised when a dictionary value is not a DataFrame."""
     scoring_dict_trainer = {
         "model1": "invalid_df"
     }
@@ -63,7 +65,7 @@ def test_result_handler_invalid_dataframe():
         ResultHandler(scoring_dict_trainer)
 
 def test_result_handler_invalid_std_input():
-    # Test with invalid std value
+    """Ensure ValueError is raised when std is not a boolean."""
     scoring_dict_trainer = {
         "model1": pd.DataFrame({"mean": [0.85], "std": [0.03]})
     }

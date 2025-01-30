@@ -22,6 +22,8 @@ In a machine learning pipeline, code can often be repeated when working with mul
 
 ## Installation
 
+Before installation, please make sure Python 3.12 or newer is installed. 
+
 ```bash
 $ pip install classifierpromax
 ```

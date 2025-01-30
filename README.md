@@ -4,8 +4,6 @@
 
 [![Documentation Status](https://readthedocs.org/projects/classifierpromax/badge/?version=latest)](https://classifierpromax.readthedocs.io/en/latest/?badge=latest)[![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/downloads/release/python-3120/) ![ci-cd](https://github.com/UBC-MDS/classifierpromax/actions/workflows/ci-cd.yml/badge.svg) [![codecov](https://codecov.io/gh/UBC-MDS/classifierpromax/branch/main/graph/badge.svg)](https://codecov.io/gh/UBC-MDS/classifierpromax)
 
-https://app.codecov.io/github/UBC-MDS/ClassifierProMax
-
 `classifierpromax` is a scikit-learn wrapper library that helps to train and optimize multiple classifier models in parallel.
 
 `ClassifierTrainer()`:

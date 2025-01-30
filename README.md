@@ -63,9 +63,31 @@ from classifierpromax.ResultHandler import ResultHandler
 summary = ResultHandler(baseline_score, opt_score)
 print(summary)
 ```
+## Testing
+Create a new environment with Python 3.12. 
+```bash
+conda create -n classifierpromax python=3.12
+conda activate classifierpromax
+```
+
+Clone the repo.
+```bash
+git clone git@github.com:UBC-MDS/ClassifierProMax.git
+```
+
+Install poetry following these [instructions](https://python-poetry.org/docs/#installing-with-the-official-installer) and then run the following bash command. 
+```bash
+$ poetry install
+```
+
+Execute pytest from the root project directory. 
+```bash
+$ pytest
+```
+
 ## Contributing
 
-Interested in contributing? Check out the contributing guidelines. Please note that this project is released with a Code of Conduct. By contributing to this project, you agree to abide by its terms.
+Interested in contributing? Check out the [contributing guidelines](https://github.com/UBC-MDS/ClassifierProMax/blob/main/CONTRIBUTING.md). Please note that this project is released with a Code of Conduct. By contributing to this project, you agree to abide by its terms.
 
 ## Contributors
 
@@ -73,7 +95,7 @@ Long Nguyen, Jenson Chang, Gunisha Kaur, Han Wang
 
 ## License
 
-`classifierpromax` was created by Long Nguyen, Jenson Chang, Gunisha Kaur, Han Wang. It is licensed under the terms of the MIT license.
+`classifierpromax` was created by Long Nguyen, Jenson Chang, Gunisha Kaur, Han Wang. It is licensed under the terms of the [MIT license](https://github.com/UBC-MDS/ClassifierProMax/blob/main/LICENSE).
 
 ## Credits
 

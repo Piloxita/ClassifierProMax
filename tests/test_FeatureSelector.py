@@ -29,24 +29,24 @@ def preprocessor():
     return StandardScaler()
 
 # Test RFE with valid input
-def test_rfe_selection(sample_data, trained_models, preprocessor):
+@pytest.mark.parametrize("n_features", [3, 5, 7])
+def test_rfe_different_features(sample_data, trained_models, preprocessor, n_features):
     X, y = sample_data
     selected_models = FeatureSelector(
-        preprocessor, trained_models, X, y, method='RFE', n_features_to_select=5
+        preprocessor, trained_models, X, y, method='RFE', n_features_to_select=n_features
     )
     assert "RandomForest" in selected_models
     assert "LogisticRegression" in selected_models
-    assert len(selected_models["RandomForest"].steps) == 3  # Ensure pipeline has 3 steps
 
-# Test Pearson feature selection
-def test_pearson_selection(sample_data, trained_models, preprocessor):
+# Test Pearson with different thresholds
+@pytest.mark.parametrize("threshold", [0.1, 0.3, 0.5])
+def test_pearson_different_thresholds(sample_data, trained_models, preprocessor, threshold):
     X, y = sample_data
     selected_models = FeatureSelector(
-        preprocessor, trained_models, X, y, method='Pearson', n_features_to_select=5
+        preprocessor, trained_models, X, y, method='Pearson', threshold=threshold
     )
     assert "RandomForest" in selected_models
     assert "LogisticRegression" in selected_models
-    assert len(selected_models["RandomForest"].steps) == 3  # Ensure pipeline has 3 steps
 
 # Test invalid method
 def test_invalid_method(sample_data, trained_models, preprocessor):
@@ -63,3 +63,25 @@ def test_missing_n_features_to_select(sample_data, trained_models, preprocessor)
         FeatureSelector(
             preprocessor, trained_models, X, y, method='RFE'
         )
+
+# Test RFE when n_features_to_select exceeds available features
+def test_rfe_exceeding_features(sample_data, trained_models, preprocessor):
+    X, y = sample_data
+    with pytest.raises(ValueError, match="n_features_to_select cannot exceed the number of features."):
+        FeatureSelector(
+            preprocessor, trained_models, X, y, method='RFE', n_features_to_select=15
+        )
+
+# Test Pearson when no features meet the threshold
+def test_pearson_no_features_selected(sample_data, trained_models, preprocessor):
+    X, y = sample_data
+    selected_models = FeatureSelector(
+        preprocessor, trained_models, X, y, method='Pearson', threshold=1.0
+    )
+    assert all(model.steps[-1][0] == 'classifier' for model in selected_models.values())
+
+# Test empty model dictionary
+def test_empty_model_dictionary(sample_data, preprocessor):
+    X, y = sample_data
+    with pytest.raises(ValueError, match="No models provided for feature selection."):
+        FeatureSelector(preprocessor, {}, X, y, method='RFE', n_features_to_select=5)

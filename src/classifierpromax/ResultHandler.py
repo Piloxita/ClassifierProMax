@@ -28,6 +28,14 @@ def ResultHandler(scoring_dict_trainer, scoring_dict_optimizer=None, std=False):
           deviation scores are included.
         - If `scoring_dict_optimizer` is not provided, only the baseline scores are returned.
 
+    Raises:
+    -------
+    ValueError
+        If `scoring_dict_trainer` is not a dictionary.
+        If `scoring_dict_optimizer` is provided but not a dictionary.
+        If any value in `scoring_dict_trainer` or `scoring_dict_optimizer` is not a pandas DataFrame.
+        If `std` is not a boolean value.
+
     Example:
     --------
     >>> scoring_dict_trainer = {

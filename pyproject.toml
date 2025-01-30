@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "classifierpromax"
-version = "1.2.1"
+version = "1.2.2"
 description = "Help you train and optimize many popular classifiers in one place with a summary table"
 authors = ["Long Nguyen, Jenson Chang, Gunisha Kaur, Han Wang"]
 license = "MIT"

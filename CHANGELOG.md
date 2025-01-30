@@ -1,7 +1,15 @@
 # CHANGELOG
 
 
-## v0.1.0 (2025-01-30)
+## v1.2.1 (2025-01-30)
+
+### Bug Fixes
+
+- **readme**: Updated readme
+  ([`e4ce8b3`](https://github.com/UBC-MDS/ClassifierProMax/commit/e4ce8b302b3f53cae2c4715af035e1e2b64e1491))
+
+
+## v1.2.0 (2025-01-30)
 
 ### Features
 

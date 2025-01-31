@@ -2,7 +2,7 @@
 
 <img src="https://github.com/UBC-MDS/ClassifierProMax/blob/75d4f39c2e75ceff955005e6d443be4151ecc40a/img/classifierpromax_logo.png?raw=true" alt="drawing" width="200"/>
 
-[![Documentation Status](https://readthedocs.org/projects/classifierpromax/badge/?version=latest)](https://classifierpromax.readthedocs.io/en/latest/?badge=latest)[![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/downloads/release/python-3120/) ![ci-cd](https://github.com/UBC-MDS/classifierpromax/actions/workflows/ci-cd.yml/badge.svg) [![codecov](https://codecov.io/gh/UBC-MDS/classifierpromax/branch/main/graph/badge.svg)](https://codecov.io/gh/UBC-MDS/classifierpromax)
+[![Documentation Status](https://readthedocs.org/projects/classifierpromax/badge/?version=latest)](https://classifierpromax.readthedocs.io/en/latest/?badge=latest) [![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/downloads/release/python-3120/) ![ci-cd](https://github.com/UBC-MDS/classifierpromax/actions/workflows/ci-cd.yml/badge.svg) [![codecov](https://codecov.io/gh/UBC-MDS/classifierpromax/branch/main/graph/badge.svg)](https://codecov.io/gh/UBC-MDS/classifierpromax)
 
 `classifierpromax` is a scikit-learn wrapper library that helps to train and optimize multiple classifier models in parallel.
 
@@ -63,6 +63,9 @@ from classifierpromax.ResultHandler import ResultHandler
 summary = ResultHandler(baseline_score, opt_score)
 print(summary)
 ```
+
+For a more in-depth tutorial on using the library, please refer to the `example.ipynb` Jupyter Notebook in the `docs` folder. 
+
 ## Testing
 Create a new environment with Python 3.12. 
 ```bash
@@ -70,12 +73,13 @@ conda create -n classifierpromax python=3.12
 conda activate classifierpromax
 ```
 
-Clone the repo.
+Clone the repo and `cd` in to the directory. 
 ```bash
 git clone git@github.com:UBC-MDS/ClassifierProMax.git
+cd ClassifierProMax
 ```
 
-Install poetry following these [instructions](https://python-poetry.org/docs/#installing-with-the-official-installer) and then run the following bash command. 
+Install poetry following these [instructions](https://python-poetry.org/docs/#installing-with-the-official-installer) and then run the following bash command to install the depencies needed to run the library. 
 ```bash
 $ poetry install
 ```

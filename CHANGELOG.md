@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v1.2.3 (2025-01-31)
+
+### Bug Fixes
+
+- Address peer feedback
+  ([`1ae2c82`](https://github.com/UBC-MDS/ClassifierProMax/commit/1ae2c828d04a0da002b917465070a98e518cf71e))
+
+
 ## v1.2.2 (2025-01-30)
 
 ### Bug Fixes
